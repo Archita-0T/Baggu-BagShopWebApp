@@ -1,9 +1,9 @@
 <%- include('./partials/header') %>
 
-    <% if(error && error.length>0){ %>
+    <% if(error.length>0){ %>
         <div class="absolute top-5 left-1/2 -translate-x-1/2 -translate-y-1/2 p-3 rounded-md bg-red-500">
             <span class="inline-block mt-1 mb-1 text-white">
-                <%= error.join(', ') %>
+                <%= error %>
             </span>
         </div>
         <% } %>
@@ -12,16 +12,19 @@
                     <div class="w-full px-32">
                         <h3 class="text-4xl">welcome to <span class="text-blue-400 font-semibold">Baggu</span></h3>
                         <h4 class="text-2xl mb-5">create your account</h4>
-                        <form autocomplete="off" action="/users/register" method="post">
+                        <form id="registrationForm" autocomplete="off" action="/users/register" method="post" onsubmit="return validateForm()">
                             <input
                                 class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="text" placeholder="Full Name" name="fullname">
+                                type="text" placeholder="Full Name" name="fullname" id="fullname">
+                                <div id="fullnameError" class="text-red-500 text-sm mb-2"></div>
                             <input
                                 class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="email" placeholder="Email" name="email">
+                                type="email" placeholder="Email" name="email" id="email">
+                                <div id="emailError" class="text-red-500 text-sm mb-2"></div>
                             <input
                                 class="bg-zinc-100 block w-full px-3 py-2 border-[1px] rounded-md mb-3 border-zinc-200"
-                                type="password" placeholder="Password" name="password">
+                                type="password" placeholder="Password" name="password" id="password">
+                                <div id="passwordError" class="text-red-500 text-sm mb-2"></div>
                             <input class="px-5 rounded-full py-3 mt-2 bg-blue-500 text-white" type="submit"
                                 value="Create My Account">
                         </form>
@@ -44,3 +47,50 @@
                 </div>
             </div>
             <%- include('./partials/footer') %>
+
+            <script>
+                function validateForm() {
+                    const fullname = document.getElementById('fullname').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+            
+                    let isValid = true;
+            
+                    // Clear previous errors
+                    document.getElementById('fullnameError').textContent = '';
+                    document.getElementById('emailError').textContent = '';
+                    document.getElementById('passwordError').textContent = '';
+                     // Validate Full Name
+        if (fullname === '') {
+            document.getElementById('fullnameError').textContent = 'Full Name is required';
+            isValid = false;
+        }else if(fullname.length<3){ document.getElementById('fullnameError').textContent = 'FullName should be at least 3 characters long';
+        isValid = false;
+
+        }
+
+        // Validate Email
+        if (email === '') {
+            document.getElementById('emailError').textContent = 'Email is required';
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            document.getElementById('emailError').textContent = 'Please enter a valid email address';
+            isValid = false;
+        }
+         // Validate Password
+         if (password.length === 0) {
+            document.getElementById('passwordError').textContent = 'Password is required';
+            isValid = false;
+        } else if (password.length < 8) {
+            document.getElementById('passwordError').textContent = 'Password should be at least 8 characters long';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function isValidEmail(email) {
+        // Basic email validation regex, you can use a more sophisticated one if needed
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+</script>
